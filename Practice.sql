@@ -136,7 +136,23 @@ SELECT Id, CompanyName, City, Country
   FROM Product
  ORDER BY UnitPrice DESC
 
+/* Problem: Get all but the 10 most expensive products sorted by price*/
+SELECT Id, ProductName, UnitPrice, Package
+  FROM Product
+ ORDER BY UnitPrice DESC
+OFFSET 10 ROWS
 
+
+/*Problem: List all supplier countries in alphabetical order.*/
+
+SELECT DISTINCT Country
+  FROM Supplier
+ORDER BY COUNTRY
+
+/*Problem: List the number of supplier countries*/
+
+SELECT COUNT (DISTINCT Country)
+  FROM Supplier
 
 
 
