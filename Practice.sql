@@ -142,6 +142,14 @@ SELECT Id, ProductName, UnitPrice, Package
  ORDER BY UnitPrice DESC
 OFFSET 10 ROWS
 
+/*Get the 10th to 15th most expensive products sorted by price*/
+
+SELECT Id, ProductName, UnitPrice, Package
+FROM Product
+ORDER BY UnitPrice DESC
+OFFSET 10 ROWS
+FETCH NEXT 5 ROWS ONLY
+
 
 /*Problem: List all supplier countries in alphabetical order.*/
 
@@ -153,10 +161,144 @@ ORDER BY COUNTRY
 
 SELECT COUNT (DISTINCT Country)
   FROM Supplier
+  /*Problem: Find the cheapest product*/
+  SELECT MIN(UnitPrice)
+  FROM Product
+
+/*Problem: Find the largest order placed in 2014*/
+SELECT MAX(TotalAmount)
+  FROM [Order]
+ WHERE YEAR(OrderDate) = 2014
+
+/*Problem: Find the last order date in 2013*/
+
+SELECT MAX(orderDate)
+FROM [Order]
+WHERE YEAR(OrderDate) = 2013
+
+/*Problem: Find the number of customers*/
+SELECT COUNT(Id)
+  FROM Customer
+
+/*Problem: Compute the total amount sold in 2013*/
+SELECT SUM(TotalAmount)
+FROM [Order]
+WHERE YEAR(OrderDate) = 2013
+
+/*Problem: Compute the average size of all orders*/
+SELECT AVG(TotalAmount)
+  FROM [Order]
+
+/*Problem: Get customer named Thomas Hardy */
+
+SELECT Id, FirstName, LastName, City, Country
+  FROM Customer
+ WHERE FirstName = 'Thomas' AND LastName = 'Hardy'
 
 
+/* Problem: List all customers from Spain or France*/
 
+SELECT Id, FirstName, LastName, City, Country
+  FROM Customer
+ WHERE Country = 'Spain' OR Country = 'France'
 
+/*Problem: List all customers that are not from the USA*/
+SELECT Id, FirstName, LastName, City, Country
+  FROM Customer
+ WHERE NOT Country = 'USA'
 
+ /*Problem: List all orders that not between $50 and $15000*/
+ SELECT Id, OrderDate, CustomerId, TotalAmount
+  FROM [Order]
+ WHERE NOT (TotalAmount >= 50 AND TotalAmount <= 15000)
+ ORDER BY TotalAmount DESC
+
+  SELECT Id, OrderDate, CustomerId, TotalAmount
+  FROM [Order]
+ WHERE TotalAmount NOT between 50 AND 15000
+ ORDER BY TotalAmount DESC
+ /*Problem: List all products between $10 and $20*/
+
+ SELECT Id, ProductName, UnitPrice
+  FROM Product
+ WHERE UnitPrice BETWEEN 10 AND 20
+ ORDER BY UnitPrice
+
+ /*Problem: List all products not between $10 and $100 sorted by price.*/
+
+SELECT Id, ProductName, UnitPrice
+  FROM Product
+ WHERE UnitPrice NOT BETWEEN 5 AND 100
+ ORDER BY UnitPrice
+
+ /*Problem: Get the number of orders and amount sold between Jan 1, 2013 and Jan 31, 2013.*/
+ SELECT COUNT(Id), SUM(TotalAmount)
+  FROM [Order]
+ WHERE OrderDate BETWEEN '1/1/2013' AND '1/31/2013'
+/* Problem: List all suppliers from the USA, UK, OR Japan*/
+SELECT Id, CompanyName, City, Country
+  FROM Supplier
+ WHERE Country IN ('USA', 'UK', 'Japan')
+
+ /*Problem: List all products that are not exactly $10, $20, $30, $40, or $50*/
+
+ SELECT Id, ProductName, UnitPrice
+  FROM Product
+ WHERE UnitPrice NOT IN (10,20,30,40,50)
+
+/*Problem: List all customers that are from  the same countries as the suppliers.*/
+
+SELECT Id, FirstName, LastName, Country
+  FROM Customer
+ WHERE Country IN 
+       (SELECT Country 
+          FROM Supplier) 
+
+/*Problem: List all products with names that start with 'Ca'*/
+SELECT Id, ProductName, UnitPrice, Package
+  FROM Product
+ WHERE ProductName LIKE 'Ca%'
+
+ /*Problem: List all products that start with 'Cha' or 'Chan' and have one more character.*/
+SELECT Id, ProductName, UnitPrice, Package
+  FROM Product
+ WHERE ProductName LIKE 'Cha_' OR ProductName LIKE 'Chan_'
+
+ /*Problem: List all suppliers that have no fax number*/
+SELECT Id, CompanyName, Phone, Fax 
+  FROM Supplier
+ WHERE Fax IS NULL
+
+ /*Problem: List all suppliers that do have a fax number*/
+
+ SELECT Id, CompanyName, Phone, Fax 
+  FROM Supplier
+ WHERE Fax IS NOT NULL
+
+ /*Problem: List the number of customers in each country */
+
+ SELECT COUNT(Id), Country 
+  FROM Customer
+ GROUP BY Country
+
+ /*Problem: List the number of customers in each country sorted high to low */
+ SELECT COUNT(Id), Country 
+  FROM Customer
+ GROUP BY Country
+ ORDER BY COUNT(Id) DESC
+
+ /*Problem: List the total amount ordered for each customer */
+
+ SELECT SUM(O.TotalAmount), C.FirstName, C.LastName
+  FROM [Order] O JOIN Customer C 
+    ON O.CustomerId = C.Id
+ GROUP BY C.FirstName, C.LastName
+ ORDER BY SUM(O.TotalAmount) DESC
+
+ /*Problem: List the number of customers in each country. Only include countries with more than 10 customers. */
+ SELECT COUNT(Id), Country 
+  FROM Customer
+ GROUP BY Country
+HAVING COUNT(Id) > 10
 
 
